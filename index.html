@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Währungsrechner | Echtzeit-Wechselkurse</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <main class="container">
+        <div class="card">
+            <header class="header">
+                <div class="badge">Echtzeit-Kurse</div>
+                <h1>Währungsrechner</h1>
+                <p class="subtitle">Aktuelle Wechselkurse sekundenschnell berechnen</p>
+            </header>
+
+            <section class="converter">
+                <div class="input-group">
+                    <label for="amount-one">Betrag:</label>
+                    <div class="field-row">
+                        <input type="number" id="amount-one" value="1" min="0" step="any" placeholder="0.00">
+                        <select id="currency-one" aria-label="Ausgangswährung">
+                            <option value="EUR" selected>EUR (€) - Euro</option>
+                            <option value="USD">USD ($) - US-Dollar</option>
+                            <option value="GBP">GBP (£) - Britisches Pfund</option>
+                            <option value="CHF">CHF (Fr) - Schweizer Franken</option>
+                            <option value="PLN">PLN (zł) - Polnischer Złoty</option>
+                            <option value="UAH">UAH (₴) - Ukrainische Hrywnja</option>
+                            <option value="JPY">JPY (¥) - Japanischer Yen</option>
+                            <option value="CAD">CAD ($) - Kanadischer Dollar</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="swap-wrapper">
+                    <button id="swap" class="swap-btn" title="Währungen tauschen" aria-label="Währungen tauschen">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M7 16V4M7 4L3 8M7 4L11 8M17 8v12M17 20l4-4M17 20l-4-4"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="input-group">
+                    <label for="amount-two">Umgerechnet:</label>
+                    <div class="field-row">
+                        <input type="text" id="amount-two" placeholder="0.00" readonly>
+                        <select id="currency-two" aria-label="Zielwährung">
+                            <option value="EUR">EUR (€) - Euro</option>
+                            <option value="USD" selected>USD ($) - US-Dollar</option>
+                            <option value="GBP">GBP (£) - Britisches Pfund</option>
+                            <option value="CHF">CHF (Fr) - Schweizer Franken</option>
+                            <option value="PLN">PLN (zł) - Polnischer Złoty</option>
+                            <option value="UAH">UAH (₴) - Ukrainische Hrywnja</option>
+                            <option value="JPY">JPY (¥) - Japanischer Yen</option>
+                            <option value="CAD">CAD ($) - Kanadischer Dollar</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="footer">
+                <div class="rate-box" id="rate">Kurs wird geladen...</div>
+                <small class="timestamp" id="timestamp">API: ExchangeRate-API (v4)</small>
+            </footer>
+        </div>
+    </main>
+
+    <script src="main.js"></script>
+</body>
+</html>
