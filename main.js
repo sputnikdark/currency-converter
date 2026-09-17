@@ -1,102 +1,45 @@
 'use strict';
 
-/**
- * Currency Converter (Währungsrechner)
- * Author: Andrii Rebikov (github.com/sputnikdark)
- * Description: Fetches real-time exchange rates via ExchangeRate-API
- * and recalculates values dynamically upon user interaction.
- */
-
 const amountOne = document.getElementById('amount-one');
 const amountTwo = document.getElementById('amount-two');
 const currencyOne = document.getElementById('currency-one');
 const currencyTwo = document.getElementById('currency-two');
 const rateEl = document.getElementById('rate');
-const swapBtn = document.getElementById('swap');
-const timestampEl = document.getElementById('timestamp');
+const swapEl = document.getElementById('swap');
 
-// Cache to prevent redundant network requests for the same base currency
-const rateCache = new Map();
-
-/**
- * Fetch rates for a given base currency
- * @param {string} baseCurrency 
- * @returns {Promise<Object>}
- */
-async function fetchRates(baseCurrency) {
-    if (rateCache.has(baseCurrency)) {
-        return rateCache.get(baseCurrency);
-    }
-
-    const endpoint = `https://api.exchangerate-api.com/v4/latest/${baseCurrency}`;
-    const response = await fetch(endpoint);
-
-    if (!response.ok) {
-        throw new Error(`HTTP-Fehler beim Abrufen der Kurse: Status ${response.status}`);
-    }
-
-    const data = await response.json();
-    rateCache.set(baseCurrency, data);
-    return data;
-}
-
-/**
- * Main calculate function: updates conversion results and rate indicators
- */
 async function calculate() {
-    const base = currencyOne.value;
-    const target = currencyTwo.value;
-    const amountVal = parseFloat(amountOne.value);
+	try {
+		const currency_one = currencyOne.value;
+		const currency_two = currencyTwo.value;
 
-    if (isNaN(amountVal) || amountVal < 0) {
-        amountTwo.value = '0.00';
-        rateEl.textContent = 'Bitte einen gültigen Betrag eingeben';
-        return;
-    }
+		const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${currency_one}`);
 
-    try {
-        rateEl.textContent = 'Kurs wird aktualisiert...';
-        const data = await fetchRates(base);
-        const rate = data.rates[target];
+		if (!response.ok) {
+			throw new Error('Netzwerkfehler!');
+		}
 
-        if (rate === undefined) {
-            throw new Error(`Zielwährung ${target} nicht gefunden.`);
-        }
+		const data = await response.json();
+		const rate = data.rates[currency_two];
 
-        const converted = (amountVal * rate).toFixed(2);
-        amountTwo.value = converted;
+		const sum = (amountOne.value * rate).toFixed(2);
+		amountTwo.value = sum;
 
-        rateEl.textContent = `1 ${base} = ${rate.toFixed(4)} ${target}`;
-        
-        if (data.date) {
-            timestampEl.textContent = `Stand der Kurse: ${data.date} | ExchangeRate-API`;
-        }
-    } catch (error) {
-        console.error('Fehler bei der Währungsumrechnung:', error);
-        rateEl.textContent = 'Fehler beim Laden des Wechselkurses';
-        amountTwo.value = '-';
-    }
+		rateEl.innerHTML = `1 ${currency_one} = ${rate} ${currency_two}`;
+	} catch (err) {
+		console.error(err);
+		rateEl.innerText = 'Fehler beim Laden des Kurses';
+	} 
 }
 
-/**
- * Swap base and target currencies with animation
- */
-function swapCurrencies() {
-    swapBtn.classList.add('rotate');
-    setTimeout(() => swapBtn.classList.remove('rotate'), 300);
-
-    const temp = currencyOne.value;
-    currencyOne.value = currencyTwo.value;
-    currencyTwo.value = temp;
-
-    calculate();
-}
-
-// Event Listeners
 currencyOne.addEventListener('change', calculate);
-currencyTwo.addEventListener('change', calculate);
 amountOne.addEventListener('input', calculate);
-swapBtn.addEventListener('click', swapCurrencies);
+currencyTwo.addEventListener('change', calculate);
 
-// Initial Calculation on Load
+swapEl.addEventListener('click', () => {
+	const temp = currencyOne.value;
+	currencyOne.value = currencyTwo.value;
+	currencyTwo.value = temp;
+	calculate();
+});
+
 calculate();
